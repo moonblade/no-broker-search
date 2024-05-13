@@ -1,8 +1,10 @@
 import json
 import requests
 import base64
+from datetime import datetime
 
 MAX_PAGES = 10
+MAX_DAYS_OLD = 45
 MAX_RENT = 25000
 RADIUS = 2
 INDEPENDANT_TERMS = ["standalone", "independent"]
@@ -112,6 +114,11 @@ def filterData(data):
         if apartment.get("thumbnailImage") == "https://assets.nobroker.in/static/img/534_notxt.jpg":
             continue
 
+        # if creationDate epoch timestamp is more than one month old from now, remove its
+        if apartment.get("creationDate", 0) < datetime.now().timestamp() - MAX_DAYS_OLD * 24 * 60 * 60:
+            continue
+
+
         # else add it to filteredData
         filteredData.append(apartment)
 
@@ -161,7 +168,7 @@ def main():
             print(apartment.get("shortUrl"))
             print("---")
 
-    # print(json.dumps(apartments, indent=2))
+    #print(json.dumps(apartments, indent=2))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 #Electronic City Phase 1
 #Marathahalli
-#Cv Raman Nagar
+#C v Raman Nagar kaggadasapura
+#kaggadasapura
 #Indiranagar
 #JP Nagar
 #Krishnarajapura
@@ -10,5 +11,5 @@
 #Koramangala
 #HSR Layout
 #Madiwala
-#Brookefield
-Hoodi
+Brookefield
+#Hoodi
