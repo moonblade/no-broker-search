@@ -2,14 +2,16 @@
 #Marathahalli
 #C v Raman Nagar kaggadasapura
 #kaggadasapura
+#Malleshpalya
 #Indiranagar
 #JP Nagar
 #Krishnarajapura
 #Whitefield
 #Horamavu
 #Banaswadi
-#Koramangala
+Koramangala
 #HSR Layout
 #Madiwala
-Brookefield
+#Brookefield
+#Domlur
 #Hoodi

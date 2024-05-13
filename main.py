@@ -6,16 +6,10 @@ from datetime import datetime
 MAX_PAGES = 10
 MAX_DAYS_OLD = 45
 MAX_RENT = 25000
+MIN_AREA = 900
 RADIUS = 2
 INDEPENDANT_TERMS = ["standalone", "independent"]
 BLACKLISTED_LOCATIONS = ["bommasandra"]
-
-with open("data.json") as file:
-    savedData = json.load(file)
-
-def updateSaveData():
-    with open("data.json", "w") as file:
-        json.dump(savedData, file, indent=2)
 
 seen = set()
 locations = []
@@ -32,7 +26,7 @@ with open("locations.txt") as file:
         if not location.startswith("#"):
             locations.append(location)
 
-def saveLocationData(location):
+def getLocationData(location):
     response = requests.get(f"https://www.nobroker.in/places/api/v1/autocomplete", params={
         "hint": location, 
         "city": "bangalore",
@@ -47,6 +41,7 @@ def saveLocationData(location):
             "x-tenant-id": "NOBROKER"
         })
         response = response.json()
+        print(response.get("place", {}).get("description"))
         locationData = {
             "lat": response.get("place").get("location").get("lat"),
             "lon": response.get("place").get("location").get("lon"),
@@ -56,16 +51,7 @@ def saveLocationData(location):
         }
     else: 
         locationData = {}
-    if not "locations" in savedData:
-        savedData["locations"] = {}
-    savedData["locations"][location] = locationData
-    updateSaveData()
-
-def prepareLocations():
-    for location in locations:
-        location = location.strip()
-        if location not in savedData.get("locations", {}):
-            saveLocationData(location)
+    return locationData
 
 def filterData(data):
     filteredData = []
@@ -103,7 +89,7 @@ def filterData(data):
             continue
 
         # if "propertySize" < 900, remove it
-        if apartment.get("propertySize", 0) < 1000:
+        if apartment.get("propertySize", 0) < MIN_AREA:
             continue
 
         # if "floor" is the same as "totalFloors", remove it, only if both have values
@@ -119,6 +105,10 @@ def filterData(data):
             continue
 
 
+        # In amenitiesMap ensure that "SECURITY" is true
+        if not apartment.get("amenitiesMap", {}).get("SECURITY", False):
+            continue
+
         # else add it to filteredData
         filteredData.append(apartment)
 
@@ -128,7 +118,7 @@ def getApartments():
     apartments = {}
     for location in locations:
         location = location.strip()
-        searchParams = [savedData["locations"][location]]
+        searchParams = [getLocationData(location)]
         # convert searchparms to base64 string
         searchParams = json.dumps(searchParams)
         searchParams = searchParams.encode("utf-8")
@@ -143,7 +133,10 @@ def getApartments():
                 "type": "BHK2",
                 "city": "bangalore",
             })
-            response = response.json()
+            try:
+                response = response.json()
+            except Exception as e:
+                break
             data = response.get("data", [])
             filteredData = filterData(data)
 
@@ -157,7 +150,6 @@ def getApartments():
     return apartments
 
 def main():
-    prepareLocations()
     apartments = getApartments()
     for location in apartments:
         print(location)
