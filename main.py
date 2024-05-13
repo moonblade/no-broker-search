@@ -3,14 +3,10 @@ import requests
 import base64
 
 MAX_PAGES = 10
+MAX_RENT = 25000
 RADIUS = 2
 INDEPENDANT_TERMS = ["standalone", "independent"]
 BLACKLISTED_LOCATIONS = ["bommasandra"]
-IGNORE_LIST = {
-    "http://nobr.kr/sv/1JLr4C3": "small kitchen",
-    "http://nobr.kr/sv/1LtxXB3": "small kitchen",
-    "http://nobr.kr/sv/149Tz65": "toilet"
-}
 
 with open("data.json") as file:
     savedData = json.load(file)
@@ -19,8 +15,13 @@ def updateSaveData():
     with open("data.json", "w") as file:
         json.dump(savedData, file, indent=2)
 
-seen = set(IGNORE_LIST.keys())
+seen = set()
 locations = []
+
+with open("ignore_list.txt") as file:
+    ignores = file.readlines()
+    for ignore in ignores:
+        seen.add(ignore.strip())
 
 with open("locations.txt") as file:
     dummyLocations = file.readlines()
@@ -78,7 +79,7 @@ def filterData(data):
             rent += maintenance
             apartment.update({"rent": rent})
 
-        if rent > 25000:
+        if rent > MAX_RENT:
             continue
 
         # if any term in INDEPENDANT_TERMS is in propertyTitle, remove it

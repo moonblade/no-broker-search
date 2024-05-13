@@ -111,6 +111,20 @@
       "placeId": "ChIJp8gWiCoXrjsRMm93KPuPiRI",
       "placeName": "Banaswadi",
       "showMap": false
+    },
+    "Brookefield": {
+      "lat": 12.9654796,
+      "lon": 77.7184638,
+      "placeId": "ChIJMXz1nyQSrjsRapXq4IDC75I",
+      "placeName": "Brookefield",
+      "showMap": false
+    },
+    "Hoodi": {
+      "lat": 12.9895552,
+      "lon": 77.71265710000002,
+      "placeId": "ChIJD1FpvJMRrjsRSPg6XJzpz5I",
+      "placeName": "Hoodi",
+      "showMap": false
     }
   }
 }
