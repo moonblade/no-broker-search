@@ -1,4 +1,4 @@
-#Electronic City Phase 1
+Electronic City Phase 1
 #Krishnarajapura
 #JP Nagar
 #Marathahalli
@@ -10,7 +10,8 @@
 #Horamavu
 #Banaswadi
 #Koramangala
-HSR Layout
+#HSR Layout
+#Harlur
 #Madiwala
 #Brookefield
 #Domlur
@@ -24,4 +25,4 @@ HSR Layout
 #cubbon park
 #Jayanagar
 #TG Ascent
-Bommanahalli
+#Bommanahalli

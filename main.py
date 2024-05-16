@@ -120,6 +120,10 @@ def filterData(data):
         if apartment.get("aea__", {}).get("NON_VEG_ALLOWED", {}).get("display_value", "").lower() == "no":
             continue
 
+        # if leaseType is "FAMILY" ignore it
+        if apartment.get("leaseType", "").lower() == "family":
+            continue
+
 
         # else add it to filteredData
         filteredData.append(apartment)
