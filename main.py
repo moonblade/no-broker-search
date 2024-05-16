@@ -6,13 +6,16 @@ from datetime import datetime
 MAX_PAGES = 10
 MAX_DAYS_OLD = 45
 MAX_RENT = 25000
-MIN_AREA = 900
+MIN_AREA = 800
 RADIUS = 2
 INDEPENDANT_TERMS = ["standalone", "independent"]
 BLACKLISTED_LOCATIONS = ["bommasandra"]
+CITY = "bangalore"
+BHK = 2
 
 seen = set()
 locations = []
+fullNames = {}
 
 with open("ignore_list.txt") as file:
     ignores = file.readlines()
@@ -29,7 +32,7 @@ with open("locations.txt") as file:
 def getLocationData(location):
     response = requests.get(f"https://www.nobroker.in/places/api/v1/autocomplete", params={
         "hint": location, 
-        "city": "bangalore",
+        "city": CITY,
         "params": "location"
     }, headers={
         "x-tenant-id": "NOBROKER"
@@ -41,7 +44,7 @@ def getLocationData(location):
             "x-tenant-id": "NOBROKER"
         })
         response = response.json()
-        print(response.get("place", {}).get("description"))
+        fullNames[location] = response.get("place", {}).get("description")
         locationData = {
             "lat": response.get("place").get("location").get("lat"),
             "lon": response.get("place").get("location").get("lon"),
@@ -101,13 +104,22 @@ def filterData(data):
             continue
 
         # if creationDate epoch timestamp is more than one month old from now, remove its
-        if apartment.get("creationDate", 0) < datetime.now().timestamp() - MAX_DAYS_OLD * 24 * 60 * 60:
+        if apartment.get("activationDate", 0) < datetime.now().timestamp() - MAX_DAYS_OLD * 24 * 60 * 60:
             continue
 
 
         # In amenitiesMap ensure that "SECURITY" is true
         if not apartment.get("amenitiesMap", {}).get("SECURITY", False):
             continue
+
+        # If inactiveReason is not empty, remove it
+        # if apartment.get("inactiveReason", ""):
+        #    continue
+
+        # if aea__ > NON_VEG_ALLOWED > display_value lowercase is no, remove it
+        if apartment.get("aea__", {}).get("NON_VEG_ALLOWED", {}).get("display_value", "").lower() == "no":
+            continue
+
 
         # else add it to filteredData
         filteredData.append(apartment)
@@ -130,7 +142,7 @@ def getApartments():
                 "searchParam": searchParams,
                 "radius": RADIUS,
                 "sharedAccomodation": 0,
-                "type": "BHK2",
+                "type": f"BHK{BHK}",
                 "city": "bangalore",
             })
             try:
@@ -152,11 +164,10 @@ def getApartments():
 def main():
     apartments = getApartments()
     for location in apartments:
-        print(location)
+        print(fullNames.get(location, location))
         print("=====")
         for apartment in apartments[location]:
-            # print each property name, and its value
-            print(apartment.get("propertyTitle"), "-",apartment.get("rent"))
+            print(apartment.get("propertyTitle"), "-",apartment.get("rent"), "-", datetime.fromtimestamp(apartment.get("activationDate", 0)/1000).strftime("%B %d"), "-", apartment.get("inactiveReason", ""))
             print(apartment.get("shortUrl"))
             print("---")
 

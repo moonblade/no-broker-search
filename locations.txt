@@ -1,17 +1,27 @@
 #Electronic City Phase 1
+#Krishnarajapura
+#JP Nagar
 #Marathahalli
 #C v Raman Nagar kaggadasapura
 #kaggadasapura
 #Malleshpalya
 #Indiranagar
-#JP Nagar
-#Krishnarajapura
 #Whitefield
 #Horamavu
 #Banaswadi
-Koramangala
-#HSR Layout
+#Koramangala
+HSR Layout
 #Madiwala
 #Brookefield
 #Domlur
 #Hoodi
+#New tippasandra
+#GM Palya
+#Yemalur main rd
+#Mahadevapura
+#Kadubeesanahalli
+#Brigade rd
+#cubbon park
+#Jayanagar
+#TG Ascent
+Bommanahalli
