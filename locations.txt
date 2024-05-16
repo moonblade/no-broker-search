@@ -1,4 +1,4 @@
-Electronic City Phase 1
+#Electronic City Phase 1
 #Krishnarajapura
 #JP Nagar
 #Marathahalli
@@ -11,7 +11,7 @@ Electronic City Phase 1
 #Banaswadi
 #Koramangala
 #HSR Layout
-#Harlur
+Harlur
 #Madiwala
 #Brookefield
 #Domlur

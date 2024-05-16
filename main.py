@@ -167,13 +167,17 @@ def getApartments():
 
 def main():
     apartments = getApartments()
+    output = ""
     for location in apartments:
-        print(fullNames.get(location, location))
-        print("=====")
+        output += f"{fullNames.get(location, location)}\n"
+        output += "=====\n"
         for apartment in apartments[location]:
-            print(apartment.get("propertyTitle"), "-",apartment.get("rent"), "-", datetime.fromtimestamp(apartment.get("activationDate", 0)/1000).strftime("%B %d"), "-", apartment.get("inactiveReason", ""))
-            print(apartment.get("shortUrl"))
-            print("---")
+            output += f"{apartment.get('propertyTitle')} - {apartment.get('rent')} - {datetime.fromtimestamp(apartment.get('activationDate', 0)/1000).strftime('%B %d')} - {apartment.get('inactiveReason', '')}\n"
+            output += f"{apartment.get('shortUrl')}\n"
+            output += "---\n"
+    print(output)
+    with open("output.txt", "a") as file:
+        file.write(output)
 
     #print(json.dumps(apartments, indent=2))
 
