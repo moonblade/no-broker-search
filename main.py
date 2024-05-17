@@ -8,7 +8,8 @@ MAX_DAYS_OLD = 45
 MAX_RENT = 25000
 MIN_AREA = 800
 RADIUS = 2
-INDEPENDANT_TERMS = ["standalone", "independent"]
+INDEPENDANT_TERMS = []
+# INDEPENDANT_TERMS = ["standalone", "independent"]
 BLACKLISTED_LOCATIONS = ["bommasandra"]
 CITY = "bangalore"
 BHK = 2
@@ -59,16 +60,23 @@ def getLocationData(location):
 def filterData(data):
     filteredData = []
     for apartment in data:
-        if apartment.get("propertyAge", 0) >= 5:
+        # add score property to each apartment
+        score = 0
+
+        if apartment.get("propertyAge", 0) >= 10:
             continue
 
-        # if rent > 22000, remove it
+        if apartment.get("propertyAge", 0) < 5:
+            score += 5
+
+        # if rent > MAX_RENT, remove it
         rent = apartment.get("rent", 0)
         # if formattedMaintenanceAmount not an empty string, remove comma from it, convert it to integer and add it to rent
         if apartment.get("formattedMaintenanceAmount", ""):
             maintenance = int(apartment.get("formattedMaintenanceAmount").replace(",", ""))
             rent += maintenance
             apartment.update({"rent": rent})
+            apartment.update({"maintenance": maintenance})
 
         if rent > MAX_RENT:
             continue
@@ -91,7 +99,7 @@ def filterData(data):
         if any(term in apartment.get("society", "").lower() for term in INDEPENDANT_TERMS):
             continue
 
-        # if "propertySize" < 900, remove it
+        # if "propertySize" < MIN_AREA, remove it
         if apartment.get("propertySize", 0) < MIN_AREA:
             continue
 
@@ -107,10 +115,13 @@ def filterData(data):
         if apartment.get("activationDate", 0) < datetime.now().timestamp() - MAX_DAYS_OLD * 24 * 60 * 60:
             continue
 
-
-        # In amenitiesMap ensure that "SECURITY" is true
-        if not apartment.get("amenitiesMap", {}).get("SECURITY", False):
+        # if parking is NONE, remove it
+        if apartment.get("parking", "").lower() == "none":
             continue
+
+        # In amenitiesMap if "SECURITY" is true, increase score by ten
+        if apartment.get("amenitiesMap", {}).get("SECURITY", False):
+            score += 5
 
         # If inactiveReason is not empty, remove it
         # if apartment.get("inactiveReason", ""):
@@ -123,7 +134,39 @@ def filterData(data):
         # if leaseType is "FAMILY" ignore it
         if apartment.get("leaseType", "").lower() == "family":
             continue
+        else:
+            score += 0
 
+        # if leaseType is "BACHELOR_FEMALE", remove it
+        if apartment.get("leaseType", "").lower() == "BACHELOR_FEMALE".lower():
+            continue
+
+        # if gym is true, increase score by 10
+        if apartment.get("amenitiesMap", {}).get("GYM", False):
+            score += 2
+
+        # if lift is true, increase score by 10
+        if apartment.get("amenitiesMap", {}).get("LIFT", False):
+            score += 1
+
+        # if pool is true, increase score by 10
+        if apartment.get("amenitiesMap", {}).get("POOL", False):
+            score += 1
+
+        if apartment.get("buildingType", "").lower() == "ap":
+            score += 4
+        else:
+            if apartment.get("buildingType", "").lower() == "ih":
+                continue
+
+        # Give better score for lower rent
+        score += 100000 / rent
+
+        # Give better score for higher property size
+        score += apartment.get("propertySize", 0) / 100
+
+        # add score to apartment
+        apartment.update({"score": score})
 
         # else add it to filteredData
         filteredData.append(apartment)
@@ -171,15 +214,31 @@ def main():
     for location in apartments:
         output += f"{fullNames.get(location, location)}\n"
         output += "=====\n"
-        for apartment in apartments[location]:
-            output += f"{apartment.get('propertyTitle')} - {apartment.get('rent')} - {datetime.fromtimestamp(apartment.get('activationDate', 0)/1000).strftime('%B %d')} - {apartment.get('inactiveReason', '')}\n"
+        sortedApartments = sorted(apartments[location], key=lambda x: x.get("score", 0), reverse=False)
+        for apartment in sortedApartments:
+            output += f"{apartment.get('propertyTitle')},"
+            maintenance = apartment.get("maintenance", 0)
+            rent = apartment.get("rent") - maintenance
+            if not maintenance:
+                output += f" ₹{apartment.get('rent')}"
+            else:
+                output += f" ₹{rent} + {maintenance} = {apartment.get('rent')},"
+
+            # add property size
+            output += f" {apartment.get('propertySize')} sqft\n"
+
+            # Create google maps https://maps.google.com/?q={apartment location} link from location
+            # output += f"https://maps.google.com/?q={apartment.get('location')}\n"
+            # output += f"{datetime.fromtimestamp(apartment.get('activationDate', 0)/1000).strftime('%B %d')} - {apartment.get('inactiveReason', '')}\n"
+            # output += f"{apartment.get('buildingType')} {apartment.get('propertySize')}\n"
             output += f"{apartment.get('shortUrl')}\n"
             output += "---\n"
+        # print(json.dumps(sortedApartments, indent=2))
     print(output)
     with open("output.txt", "a") as file:
         file.write(output)
 
-    #print(json.dumps(apartments, indent=2))
+    # print(json.dumps(apartments, indent=2))
 
 
 if __name__ == "__main__":

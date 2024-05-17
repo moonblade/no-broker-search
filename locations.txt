@@ -2,6 +2,7 @@
 #Krishnarajapura
 #JP Nagar
 #Marathahalli
+#HAL
 #C v Raman Nagar kaggadasapura
 #kaggadasapura
 #Malleshpalya
@@ -11,7 +12,7 @@
 #Banaswadi
 #Koramangala
 #HSR Layout
-Harlur
+#Harlur
 #Madiwala
 #Brookefield
 #Domlur
