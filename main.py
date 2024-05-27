@@ -9,7 +9,7 @@ MAX_RENT = 25000
 MIN_AREA = 800
 RADIUS = 2
 INDEPENDANT_TERMS = []
-# INDEPENDANT_TERMS = ["standalone", "independent"]
+INDEPENDANT_TERMS = ["standalone", "independent"]
 BLACKLISTED_LOCATIONS = ["bommasandra"]
 CITY = "bangalore"
 BHK = 2
@@ -66,8 +66,8 @@ def filterData(data):
         if apartment.get("propertyAge", 0) >= 10:
             continue
 
-        if apartment.get("propertyAge", 0) < 5:
-            score += 5
+        # younger the building is better the score
+        score += 6 - apartment.get("propertyAge", 5)
 
         # if rent > MAX_RENT, remove it
         rent = apartment.get("rent", 0)
@@ -83,7 +83,8 @@ def filterData(data):
 
         # if any term in INDEPENDANT_TERMS is in propertyTitle, remove it
         if any(term in apartment.get("propertyTitle", "").lower() for term in INDEPENDANT_TERMS):
-            continue
+            score-=3
+            #continue
         if any(term in apartment.get("propertyTitle", "").lower() for term in BLACKLISTED_LOCATIONS):
             continue
 
@@ -97,7 +98,8 @@ def filterData(data):
 
         # if "standalone" in society, remove it
         if any(term in apartment.get("society", "").lower() for term in INDEPENDANT_TERMS):
-            continue
+            score -= 3
+            #continue
 
         # if "propertySize" < MIN_AREA, remove it
         if apartment.get("propertySize", 0) < MIN_AREA:
@@ -143,7 +145,7 @@ def filterData(data):
 
         # if gym is true, increase score by 10
         if apartment.get("amenitiesMap", {}).get("GYM", False):
-            score += 2
+            score += 5
 
         # if lift is true, increase score by 10
         if apartment.get("amenitiesMap", {}).get("LIFT", False):
@@ -154,13 +156,14 @@ def filterData(data):
             score += 1
 
         if apartment.get("buildingType", "").lower() == "ap":
-            score += 4
+            score += 5
         else:
             if apartment.get("buildingType", "").lower() == "ih":
-                continue
+                score -= 3
+                # continue
 
         # Give better score for lower rent
-        score += 100000 / rent
+        score += 10 - rent / 2000
 
         # Give better score for higher property size
         score += apartment.get("propertySize", 0) / 100
@@ -226,6 +229,7 @@ def main():
 
             # add property size
             output += f" {apartment.get('propertySize')} sqft\n"
+            output += f"{apartment.get('secondaryTitle')}\n"
 
             # Create google maps https://maps.google.com/?q={apartment location} link from location
             # output += f"https://maps.google.com/?q={apartment.get('location')}\n"
@@ -233,6 +237,7 @@ def main():
             # output += f"{apartment.get('buildingType')} {apartment.get('propertySize')}\n"
             output += f"{apartment.get('shortUrl')}\n"
             output += "---\n"
+            # print(json.dumps(apartment, indent=2))
         # print(json.dumps(sortedApartments, indent=2))
     print(output)
     with open("output.txt", "a") as file:
