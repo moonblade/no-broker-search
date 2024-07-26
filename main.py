@@ -5,8 +5,8 @@ from datetime import datetime
 
 MAX_PAGES = 10
 MAX_DAYS_OLD = 45
-MAX_RENT = 25000
-MIN_AREA = 800
+MAX_RENT = 30000
+MIN_AREA = 950
 RADIUS = 2
 INDEPENDANT_TERMS = []
 INDEPENDANT_TERMS = ["standalone", "independent"]
@@ -214,21 +214,27 @@ def getApartments():
 def main():
     apartments = getApartments()
     output = ""
+    allAparments = []
     for location in apartments:
-        output += f"{fullNames.get(location, location)}\n"
-        output += "=====\n"
-        sortedApartments = sorted(apartments[location], key=lambda x: x.get("score", 0), reverse=False)
-        for apartment in sortedApartments:
+        allAparments += apartments[location]
+    sortedApartments = sorted(allAparments, key=lambda x: x.get("score", 0), reverse=False)
+        # output += f"{fullNames.get(location, location)}\n"
+        # output += "=====\n"
+        # sortedApartments = sorted(apartments[location], key=lambda x: x.get("score", 0), reverse=False)
+    for apartment in sortedApartments:
+            # output += f"{fullNames.get(location, location)}\n"
             output += f"{apartment.get('propertyTitle')},"
             maintenance = apartment.get("maintenance", 0)
             rent = apartment.get("rent") - maintenance
             if not maintenance:
-                output += f" ₹{apartment.get('rent')}"
+                output += f" ₹{apartment.get('rent')},"
             else:
                 output += f" ₹{rent} + {maintenance} = {apartment.get('rent')},"
 
             # add property size
-            output += f" {apartment.get('propertySize')} sqft\n"
+            activationDate = datetime.fromtimestamp(apartment.get('activationDate', 0)/1000).strftime('%B %d')
+            apartment.get("activationDate", 0)
+            output += f" {apartment.get('propertySize')} sqft, Deposit {apartment.get('deposit', 0)}, {activationDate}\n"
             output += f"{apartment.get('secondaryTitle')}\n"
 
             # Create google maps https://maps.google.com/?q={apartment location} link from location

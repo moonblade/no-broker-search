@@ -1,4 +1,4 @@
-#Electronic City Phase 1
+Electronic City Phase 1
 #Krishnarajapura
 #JP Nagar
 #Marathahalli
@@ -27,4 +27,3 @@
 #Jayanagar
 #TG Ascent
 #Bommanahalli
-shanders alta vista
