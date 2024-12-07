@@ -1,11 +1,12 @@
-Electronic City Phase 1
+#Electronic City Phase 1
 #Krishnarajapura
 #JP Nagar
 #Marathahalli
 #HAL
-#C v Raman Nagar kaggadasapura
-#kaggadasapura
-#Malleshpalya
+#Kodihalli
+C v Raman Nagar kaggadasapura
+kaggadasapura
+Malleshpalya
 #Indiranagar
 #Whitefield
 #Horamavu
@@ -17,13 +18,16 @@ Electronic City Phase 1
 #Brookefield
 #Domlur
 #Hoodi
-#New tippasandra
-#GM Palya
+New tippasandra
+GM Palya
 #Yemalur main rd
 #Mahadevapura
-#Kadubeesanahalli
+Kadubeesanahalli
 #Brigade rd
 #cubbon park
 #Jayanagar
 #TG Ascent
 #Bommanahalli
+#Bellandur
+#Yemalur
+#murugeshpalya

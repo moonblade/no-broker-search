@@ -5,11 +5,11 @@ from datetime import datetime
 
 MAX_PAGES = 10
 MAX_DAYS_OLD = 45
-MAX_RENT = 30000
-MIN_AREA = 950
+MAX_RENT = 50000
+MIN_AREA = 900
 RADIUS = 2
 INDEPENDANT_TERMS = []
-INDEPENDANT_TERMS = ["standalone", "independent"]
+# INDEPENDANT_TERMS = ["standalone", "independent"]
 BLACKLISTED_LOCATIONS = ["bommasandra"]
 CITY = "bangalore"
 BHK = 2
@@ -60,8 +60,10 @@ def getLocationData(location):
 def filterData(data):
     filteredData = []
     for apartment in data:
-        # add score property to each apartment
         score = 0
+
+        if len(apartment.get("photos", [])) < 4:
+            score -= 10
 
         if apartment.get("propertyAge", 0) >= 10:
             continue
@@ -82,19 +84,22 @@ def filterData(data):
             continue
 
         # if any term in INDEPENDANT_TERMS is in propertyTitle, remove it
-        if any(term in apartment.get("propertyTitle", "").lower() for term in INDEPENDANT_TERMS):
+        if apartment.get("buildingType", "").lower() == "ih":
+            score -= 3
+            continue
+        if any(term in apartment.get("propertyTitle", "").lower() for term in INDEPENDANT_TERMS) or any(term in apartment.get("secondaryTitle", "").lower() for term in INDEPENDANT_TERMS):
             score-=3
-            #continue
+            continue
         if any(term in apartment.get("propertyTitle", "").lower() for term in BLACKLISTED_LOCATIONS):
             continue
 
         # if "bathromm" less than 2 remove it
-        if apartment.get("bathroom", 0) < 2:
-            continue
+        #if apartment.get("bathroom", 0) < 2:
+            #continue
 
         # if "deposit" > 2 lakhs, remove it
-        if apartment.get("deposit", 0) > 200000:
-            continue
+        #if apartment.get("deposit", 0) > 200000:
+        #    continue
 
         # if "standalone" in society, remove it
         if any(term in apartment.get("society", "").lower() for term in INDEPENDANT_TERMS):
@@ -110,8 +115,8 @@ def filterData(data):
             continue
 
         # if "thumbnailImage" is "https://assets.nobroker.in/static/img/534_notxt.jpg", ignore it
-        if apartment.get("thumbnailImage") == "https://assets.nobroker.in/static/img/534_notxt.jpg":
-            continue
+        #if apartment.get("thumbnailImage") == "https://assets.nobroker.in/static/img/534_notxt.jpg":
+        #    continue
 
         # if creationDate epoch timestamp is more than one month old from now, remove its
         if apartment.get("activationDate", 0) < datetime.now().timestamp() - MAX_DAYS_OLD * 24 * 60 * 60:
@@ -119,7 +124,8 @@ def filterData(data):
 
         # if parking is NONE, remove it
         if apartment.get("parking", "").lower() == "none":
-            continue
+            score -= 5
+            #continue
 
         # In amenitiesMap if "SECURITY" is true, increase score by ten
         if apartment.get("amenitiesMap", {}).get("SECURITY", False):
@@ -134,33 +140,30 @@ def filterData(data):
             continue
 
         # if leaseType is "FAMILY" ignore it
-        if apartment.get("leaseType", "").lower() == "family":
-            continue
-        else:
-            score += 0
+        #if apartment.get("leaseType", "").lower() == "family":
+        #    continue
+        #else:
+        #    score += 0
 
         # if leaseType is "BACHELOR_FEMALE", remove it
         if apartment.get("leaseType", "").lower() == "BACHELOR_FEMALE".lower():
             continue
 
         # if gym is true, increase score by 10
-        if apartment.get("amenitiesMap", {}).get("GYM", False):
-            score += 5
+        #if apartment.get("amenitiesMap", {}).get("GYM", False):
+        #    score += 5
 
-        # if lift is true, increase score by 10
-        if apartment.get("amenitiesMap", {}).get("LIFT", False):
-            score += 1
+        ## if lift is true, increase score by 10
+        #if apartment.get("amenitiesMap", {}).get("LIFT", False):
+        #    score += 1
 
-        # if pool is true, increase score by 10
-        if apartment.get("amenitiesMap", {}).get("POOL", False):
-            score += 1
+        ## if pool is true, increase score by 10
+        #if apartment.get("amenitiesMap", {}).get("POOL", False):
+        #    score += 1
 
-        if apartment.get("buildingType", "").lower() == "ap":
-            score += 5
-        else:
-            if apartment.get("buildingType", "").lower() == "ih":
-                score -= 3
-                # continue
+        #if apartment.get("buildingType", "").lower() == "ap":
+        #    score += 5
+
 
         # Give better score for lower rent
         score += 10 - rent / 2000
@@ -208,8 +211,30 @@ def getApartments():
                     seen.add(url)
                     if not location in apartments:
                         apartments[location] = []
+                    apartment["location"] = location
                     apartments[location].append(apartment)
     return apartments
+
+
+def print_relevant_info(property_data):
+    string = ""
+    string += f"\nTitle: {property_data.get('propertyTitle')}"
+    string += f"\nRent: ₹{property_data.get('rent')}"
+    string += f"\nDeposit: ₹{property_data.get('formattedDeposit')}"
+    string += f"\nSize: {property_data.get('propertySize')} sq.ft."
+    string += f"\nLocation: {property_data.get('locality')}, {property_data.get('city')}"
+    string += f"\nBathrooms: {property_data.get('bathroom')}"
+    string += f"\nParking: {property_data.get('parkingDesc')}"
+    string += f"\nFurnishing: {property_data.get('furnishingDesc')}"
+    string += f"\nAvailable From: {property_data.get('availableFrom')}"
+    string += f"\nProperty Type: {property_data.get('typeDesc')}"
+    string += f"\nOwner: {property_data.get('ownerName')}"
+    string += f"\nContacted: {'Yes' if property_data['contactedStatusDetails'].get('contacted') else 'No'}"
+    string += f"\nURL: {property_data.get('detailUrl')}"
+    string += f"\nActive: {property_data.get('active')}"
+    string += f"\nLease Type: {', '.join(property_data.get('leaseTypeNew', []))}"
+    string += "\n"
+    return string
 
 def main():
     apartments = getApartments()
@@ -225,7 +250,7 @@ def main():
             # output += f"{fullNames.get(location, location)}\n"
             output += f"{apartment.get('propertyTitle')},"
             maintenance = apartment.get("maintenance", 0)
-            rent = apartment.get("rent") - maintenance
+            rent = apartment.get("rent", 0) - maintenance
             if not maintenance:
                 output += f" ₹{apartment.get('rent')},"
             else:
@@ -235,7 +260,7 @@ def main():
             activationDate = datetime.fromtimestamp(apartment.get('activationDate', 0)/1000).strftime('%B %d')
             apartment.get("activationDate", 0)
             output += f" {apartment.get('propertySize')} sqft, Deposit {apartment.get('deposit', 0)}, {activationDate}\n"
-            output += f"{apartment.get('secondaryTitle')}\n"
+            output += f"{apartment.get('secondaryTitle')} - {apartment.get('location')}\n"
 
             # Create google maps https://maps.google.com/?q={apartment location} link from location
             # output += f"https://maps.google.com/?q={apartment.get('location')}\n"
@@ -248,6 +273,12 @@ def main():
     print(output)
     with open("output.txt", "a") as file:
         file.write(output)
+
+    string = ""
+    for property_data in sortedApartments:
+        string += print_relevant_info(property_data)
+    with open("/tmp/output.txt", "w") as file:
+        file.write(string)
 
     # print(json.dumps(apartments, indent=2))
 

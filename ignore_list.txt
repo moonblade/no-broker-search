@@ -75,3 +75,38 @@ http://nobr.kr/sv/1Nz7Bf5
 http://nobr.kr/sv/t3yJd2
 http://nobr.kr/sv/1WNfN15
 http://nobr.kr/sv/2QRHKcp
+http://nobr.kr/sv/2qbH1hp
+http://nobr.kr/sv/2rngjhp
+http://nobr.kr/sv/2vTpXsp
+http://nobr.kr/sv/2rffpqp
+http://nobr.kr/sv/2ksB5vp
+http://nobr.kr/sv/2YrDSdp
+http://nobr.kr/sv/2YYkqbp
+http://nobr.kr/sv/2YYkqbp
+http://nobr.kr/sv/4zFCQ
+http://nobr.kr/sv/13kh2V5
+http://nobr.kr/sv/1hmfJM5
+http://nobr.kr/sv/1SRmVj5
+2 BHK Flat In Bethany for Rent  In Mahadevapurahttp://nobr.kr/sv/2Bxdynp
+http://nobr.kr/sv/2vYTQwp
+http://nobr.kr/sv/2nxZM8p
+http://nobr.kr/sv/1q5qYb5
+http://nobr.kr/sv/2Bxdynp
+http://nobr.kr/sv/2bQq19p
+http://nobr.kr/sv/2r3tsCp
+http://nobr.kr/sv/2rqc4Hp
+http://nobr.kr/sv/2S6MjJp
+ sudo pip install pyperclip
+Password:
+WARNING: The directory '/Users/moonblade/Library/Caches/pip' or its parent directory is not owned or is not writable by the current user. The c
+ache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+Requirement already satisfied: pyperclip in /Users/moonblade/Library/Python/3.9/lib/python/site-packages (1.9.0)
+WARNING: Error parsing dependencies of httpx-ntlm: .* suffix can only be used with `==` or `!=` operators
+    httpx (>=0.21.*)
+           ~~~~~~~^
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly re
+ndering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-act
+ion option if you know what you are doing and want to suppress this warning.
+➜  nobroker git:(main) ✗ http://nobr.kr/sv/1M2BfY4
+http://nobr.kr/sv/27SW8Vp
+http://nobr.kr/sv/2VxYZWp
